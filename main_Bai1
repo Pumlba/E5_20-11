@@ -1,0 +1,118 @@
+
+#include <ESP32Servo.h>
+
+Servo myServo;
+
+const int SERVO_PIN = 18;
+
+int currentAngle = 0;
+
+void setup() {
+  Serial.begin(115200);
+
+  myServo.setPeriodHertz(50);
+  myServo.attach(SERVO_PIN, 500, 2400);
+
+  myServo.write(0);
+
+  Serial.println("============================");
+  Serial.println("  AUTO PARKING BARRIER");
+  Serial.println("============================");
+  Serial.println("Commands:");
+  Serial.println("OPEN");
+  Serial.println("CLOSE");
+  Serial.println("ANGLE n");
+  Serial.println("STATUS");
+  Serial.println("----------------------------");
+  Serial.println("Barrier CLOSED - Angle: 0");
+}
+
+void loop() {
+
+  if (Serial.available() > 0) {
+
+    String command = Serial.readStringUntil('\n');
+    command.trim();
+    command.toUpperCase();
+
+    // LENH OPEN
+    if (command == "OPEN") {
+
+      currentAngle = 90;
+      myServo.write(currentAngle);
+
+      Serial.println("BARRIER OPENED");
+      Serial.println("Angle: 90");
+
+    }
+
+    // LENH CLOSE
+    else if (command == "CLOSE") {
+
+      currentAngle = 0;
+      myServo.write(currentAngle);
+
+      Serial.println("BARRIER CLOSED");
+      Serial.println("Angle: 0");
+
+    }
+
+    // LENH STATUS
+    else if (command == "STATUS") {
+
+      Serial.print("Current angle: ");
+      Serial.print(currentAngle);
+      Serial.println(" degrees");
+
+    }
+
+    // LENH ANGLE
+    else if (command.startsWith("ANGLE ")) {
+
+      String value = command.substring(6);
+
+      bool validNumber = value.length() > 0;
+
+      for (int i = 0; i < value.length(); i++) {
+        if (!isDigit(value[i])) {
+          validNumber = false;
+          break;
+        }
+      }
+
+      if (validNumber) {
+
+        int angle = value.toInt();
+
+        if (angle >= 0 && angle <= 180) {
+
+          currentAngle = angle;
+          myServo.write(currentAngle);
+
+          Serial.print("Servo angle set to: ");
+          Serial.println(currentAngle);
+
+        } else {
+
+          Serial.println("ERROR: Angle must be 0-180!");
+
+        }
+
+      } else {
+
+        Serial.println("ERROR: Invalid angle!");
+
+      }
+
+    }
+
+    // LENH KHONG HOP LE
+    else {
+
+      Serial.println("ERROR: Invalid command!");
+
+    }
+
+  }
+
+}
