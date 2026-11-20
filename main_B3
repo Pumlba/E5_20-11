@@ -1,0 +1,107 @@
+
+#include <SPI.h>
+#include <MFRC522.h>
+
+// RC522 pins
+#define SS_PIN  5
+#define RST_PIN 21
+
+MFRC522 rfid(SS_PIN, RST_PIN);
+
+// UID sinh vien hop le
+byte blueUID[]  = {0x01, 0x02, 0x03, 0x04};
+byte greenUID[] = {0x11, 0x22, 0x33, 0x44};
+
+// Trang thai diem danh
+bool blueChecked = false;
+bool greenChecked = false;
+
+int totalChecked = 0;
+
+// So sanh UID
+bool compareUID(byte *uid, byte *validUID, byte size) {
+  if (size != 4) {
+    return false;
+  }
+
+  for (byte i = 0; i < 4; i++) {
+    if (uid[i] != validUID[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  SPI.begin(18, 19, 23, 5);
+  rfid.PCD_Init();
+
+  Serial.println("RFID ATTENDANCE SYSTEM");
+  Serial.println("RC522 READY");
+  Serial.println("Waiting for card...");
+}
+
+void loop() {
+
+  // Kiem tra co the moi hay khong
+  if (!rfid.PICC_IsNewCardPresent()) {
+    return;
+  }
+
+  // Doc UID
+  if (!rfid.PICC_ReadCardSerial()) {
+    return;
+  }
+
+  bool validCard = false;
+
+  // BLUE CARD
+  if (compareUID(rfid.uid.uidByte, blueUID, rfid.uid.size)) {
+
+    validCard = true;
+    Serial.println("Blue Card");
+
+    if (!blueChecked) {
+      blueChecked = true;
+      totalChecked++;
+
+      Serial.println("CHECK-IN SUCCESS");
+    } else {
+      Serial.println("ALREADY CHECKED");
+    }
+  }
+
+  // GREEN CARD
+  else if (compareUID(rfid.uid.uidByte, greenUID, rfid.uid.size)) {
+
+    validCard = true;
+    Serial.println("Green Card");
+
+    if (!greenChecked) {
+      greenChecked = true;
+      totalChecked++;
+
+      Serial.println("CHECK-IN SUCCESS");
+    } else {
+      Serial.println("ALREADY CHECKED");
+    }
+  }
+
+  // INVALID CARD
+  if (!validCard) {
+    Serial.println("INVALID CARD");
+  }
+
+  // Hien thi tong so sinh vien
+  Serial.print("TOTAL: ");
+  Serial.println(totalChecked);
+
+  Serial.println("--------------------");
+
+  // Ket thuc giao dich the
+  rfid.PICC_HaltA();
+  rfid.PCD_StopCrypto1();
+}
