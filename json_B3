@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "author": "ESP32 E5_B3 RFID",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "board-mfrc522", "id": "rfid", "top": -69.85, "left": 291.44, "attrs": {} }
+  ],
+  "connections": [
+    [ "rfid:SDA", "esp:5", "green", [] ],
+    [ "rfid:SCK", "esp:18", "blue", [] ],
+    [ "rfid:MOSI", "esp:23", "orange", [] ],
+    [ "rfid:MISO", "esp:19", "purple", [] ],
+    [ "rfid:RST", "esp:21", "yellow", [] ],
+    [ "esp:3V3", "rfid:3.3V", "red", [ "v-2.72", "h186.71", "v-115.2" ] ],
+    [ "esp:GND.1", "rfid:GND", "black", [ "h177.11", "v-127.52" ] ],
+    [ "rfid:SDA", "esp:D5", "green", [ "h-48", "v115.2" ] ],
+    [ "rfid:SCK", "esp:D18", "green", [ "h-144", "v57.6" ] ],
+    [ "rfid:MOSI", "esp:D23", "green", [ "h-172.8", "v28.8" ] ],
+    [ "rfid:MISO", "esp:D19", "green", [ "h-115.2", "v48" ] ],
+    [ "rfid:RST", "esp:D21", "green", [ "h-163.2", "v28.8" ] ]
+  ],
+  "dependencies": {}
+}
