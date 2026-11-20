@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "author": "ESP32 E5_B2",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-lcd1602", "id": "lcd", "top": -80, "left": 300, "attrs": { "pins": "i2c" } },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btnStart",
+      "top": 100,
+      "left": 300,
+      "attrs": { "color": "green", "label": "START/PAUSE" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btnReset",
+      "top": 180,
+      "left": 300,
+      "attrs": { "color": "red", "label": "RESET" }
+    }
+  ],
+  "connections": [
+    [ "lcd:GND", "esp:GND.1", "black", [] ],
+    [ "lcd:VCC", "esp:VIN", "red", [] ],
+    [ "lcd:SDA", "esp:21", "green", [] ],
+    [ "lcd:SCL", "esp:22", "blue", [] ],
+    [ "btnStart:1.l", "esp:18", "green", [] ],
+    [ "btnReset:1.l", "esp:19", "red", [] ],
+    [ "lcd:SDA", "esp:D21", "green", [ "h-160", "v105.8" ] ],
+    [ "lcd:SCL", "esp:D22", "green", [ "h-140.8", "v57.9" ] ],
+    [ "esp:D18", "btnStart:1.l", "green", [ "h0" ] ],
+    [ "esp:GND.2", "btnStart:2.l", "black", [ "h-24", "v74.08", "h288", "v-86.4" ] ],
+    [ "esp:GND.2", "btnReset:2.l", "black", [ "h-43.2", "v102.88", "h28.8" ] ],
+    [ "btnReset:1.l", "esp:D19", "green", [ "h-165.6", "v-58.6" ] ]
+  ],
+  "dependencies": {}
+}
