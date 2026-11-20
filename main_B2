@@ -1,0 +1,137 @@
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// LCD I2C
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// Button pins
+const int BTN_START = 18;
+const int BTN_RESET = 19;
+
+// Stopwatch variables
+unsigned long elapsedTime = 0;
+unsigned long startTime = 0;
+unsigned long lastDisplay = 0;
+
+bool running = false;
+
+// Debounce variables
+const unsigned long debounceDelay = 50;
+
+struct Button {
+  int pin;
+  int lastReading;
+  int stableState;
+  unsigned long lastChange;
+};
+
+Button startButton = {BTN_START, HIGH, HIGH, 0};
+Button resetButton = {BTN_RESET, HIGH, HIGH, 0};
+
+// Check button with debounce
+bool buttonPressed(Button &btn, unsigned long now) {
+  int reading = digitalRead(btn.pin);
+
+  if (reading != btn.lastReading) {
+    btn.lastReading = reading;
+    btn.lastChange = now;
+  }
+
+  if (now - btn.lastChange >= debounceDelay) {
+    if (reading != btn.stableState) {
+      btn.stableState = reading;
+
+      if (btn.stableState == LOW) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(BTN_START, INPUT_PULLUP);
+  pinMode(BTN_RESET, INPUT_PULLUP);
+
+  Wire.begin(21, 22);
+
+  lcd.init();
+  lcd.backlight();
+
+  lcd.setCursor(0, 0);
+  lcd.print("00:00");
+
+  lcd.setCursor(0, 1);
+  lcd.print("PAUSED");
+
+  Serial.println("STOPWATCH READY");
+  Serial.println("Press START to begin");
+}
+
+void loop() {
+  unsigned long now = millis();
+
+  // START / PAUSE button
+  if (buttonPressed(startButton, now)) {
+    if (running) {
+      elapsedTime += now - startTime;
+      running = false;
+
+      Serial.println("STOPWATCH PAUSED");
+    } else {
+      startTime = now;
+      running = true;
+
+      Serial.println("STOPWATCH STARTED");
+    }
+  }
+
+  // RESET button
+  if (buttonPressed(resetButton, now)) {
+    elapsedTime = 0;
+    running = false;
+
+    Serial.println("STOPWATCH RESET");
+  }
+
+  // Update LCD every 200 ms
+  if (now - lastDisplay >= 200) {
+    lastDisplay = now;
+
+    unsigned long totalTime = elapsedTime;
+
+    if (running) {
+      totalTime += now - startTime;
+    }
+
+    unsigned long totalSeconds = totalTime / 1000;
+    unsigned long minutes = totalSeconds / 60;
+    unsigned long seconds = totalSeconds % 60;
+
+    char timeText[17];
+
+    snprintf(
+      timeText,
+      sizeof(timeText),
+      "%02lu:%02lu",
+      minutes,
+      seconds
+    );
+
+    lcd.setCursor(0, 0);
+    lcd.print(timeText);
+    lcd.print("           ");
+
+    lcd.setCursor(0, 1);
+
+    if (running) {
+      lcd.print("RUNNING ");
+    } else {
+      lcd.print("PAUSED  ");
+    }
+  }
+}
