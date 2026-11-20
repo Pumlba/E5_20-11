@@ -1,9 +1,39 @@
-# GIỚI THIỆU BÀI THỰC HÀNH
+# BÀI THỰC HÀNH 2: ĐỒNG HỒ BẤM GIỜ SỬ DỤNG ESP32 VÀ LCD1602
 
-Trong bài thực hành này, em tiến hành tìm hiểu và xây dựng hệ thống đồng hồ bấm giờ sử dụng vi điều khiển ESP32 kết hợp với màn hình LCD1602 giao tiếp I2C và hai nút nhấn điều khiển. Đây là bài thực hành giúp vận dụng kiến thức về lập trình vi điều khiển, giao tiếp I2C, xử lý tín hiệu đầu vào từ nút nhấn và quản lý thời gian trong hệ thống nhúng.
+## 1. Giới thiệu
 
-Hệ thống được thiết kế với hai chức năng điều khiển chính. Nút START/PAUSE dùng để bắt đầu, tạm dừng hoặc tiếp tục quá trình đếm thời gian. Nút RESET dùng để đưa đồng hồ trở về trạng thái ban đầu. Thời gian được tính toán bằng hàm `millis()` của Arduino và hiển thị trực tiếp trên màn hình LCD1602 theo định dạng phút và giây.
+Bài thực hành xây dựng mô hình đồng hồ bấm giờ sử dụng vi điều khiển ESP32 kết hợp với màn hình LCD1602 giao tiếp I2C và hai nút nhấn điều khiển.
 
-Thông qua bài thực hành, em có thể hiểu rõ hơn cách kết nối và điều khiển các thiết bị ngoại vi với ESP32, cách sử dụng giao tiếp I2C để hiển thị dữ liệu trên LCD, cũng như cách xử lý nút nhấn và chống dội phím. Đặc biệt, việc sử dụng `millis()` thay cho hàm `delay()` giúp chương trình hoạt động liên tục, hạn chế tình trạng bị ngắt quãng trong quá trình xử lý.
+Hệ thống cho phép người dùng bắt đầu, tạm dừng, tiếp tục và đặt lại thời gian thông qua các nút nhấn. Thời gian được tính toán bằng hàm `millis()` và hiển thị trên màn hình LCD theo định dạng phút:giây (MM:SS).
 
-Qua đó, bài thực hành giúp củng cố kiến thức lý thuyết và nâng cao kỹ năng thiết kế, lập trình, mô phỏng một hệ thống nhúng có khả năng đo và hiển thị thời gian thực tế.
+## 2. Linh kiện sử dụng
+
+- ESP32 DevKit V1.
+- Màn hình LCD1602 giao tiếp I2C.
+- 2 nút nhấn (START/PAUSE và RESET).
+- Dây kết nối.
+
+## 3. Chức năng chính
+
+- **START:** Bắt đầu đếm thời gian.
+- **PAUSE:** Tạm dừng đồng hồ.
+- **RESUME:** Tiếp tục đếm thời gian sau khi tạm dừng.
+- **RESET:** Đưa thời gian về 00:00.
+- **LCD1602:** Hiển thị thời gian và trạng thái hoạt động (RUNNING/PAUSED).
+
+## 4. Kiến thức áp dụng
+
+- Lập trình vi điều khiển ESP32.
+- Giao tiếp I2C với màn hình LCD1602.
+- Đọc và xử lý tín hiệu từ nút nhấn.
+- Kỹ thuật chống dội nút nhấn (Debounce).
+- Sử dụng hàm `millis()` để quản lý thời gian mà không cần dùng `delay()`.
+
+## 5. Mục tiêu bài thực hành
+
+Hiểu được cách kết nối và điều khiển các thiết bị ngoại vi bằng ESP32, đồng thời vận dụng kiến thức lập trình hệ thống nhúng để xây dựng một ứng dụng đồng hồ bấm giờ có khả năng hoạt động liên tục và hiển thị trạng thái trực quan.
+
+## 6. Công cụ mô phỏng
+
+- Wokwi Simulator.
+- Arduino IDE / Wokwi Editor.
